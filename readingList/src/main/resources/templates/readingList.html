@@ -25,7 +25,10 @@
 		<hr/>
 		
 		<h3>Add a Book</h3>
-		<form method="POST">
+		<!-- th:action="@{/}" required to avoid error with CSRF token
+			https://stackoverflow.com/questions/5207160/what-is-a-csrf-token-what-is-its-importance-and-how-does-it-work
+		-->
+		<form method="POST" th:action="@{/}">
 			<label for="title">Title:</label>
 			<input type="text" name="title" size="50"></input><br/>
 			<label for="author">Author:</label>
