@@ -1,6 +1,7 @@
 package com.diegofdez.springbootinaction.readingList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,7 +30,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(new UserDetailsService() {
+		auth.userDetailsService(userDetailsService());
+	}
+	
+	// Define the UsersDetailService creation as a Bean to be used from other places in workspace via Spring AppContext
+	@Bean
+	public UserDetailsService userDetailsService() {
+		return new UserDetailsService() {
 			@Override
 			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 				UserDetails userDetails = readerRepository.findOne(username);
@@ -38,6 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				}
 				throw new UsernameNotFoundException("User '" + username + "' not found.");
 			}
-		});
+		};
 	}
 }

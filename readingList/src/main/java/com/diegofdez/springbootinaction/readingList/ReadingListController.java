@@ -2,6 +2,8 @@ package com.diegofdez.springbootinaction.readingList;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("/")
 public class ReadingListController {
+	private static Logger LOG = LoggerFactory.getLogger(ReadingListController.class);
+	
 	private AmazonProperties amazonProperties;
 	private ReadingListRepository readingListRepository;
 	
@@ -23,11 +27,21 @@ public class ReadingListController {
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public String readerBooks(String reader, Model model) {
-		List<Book> readingList = readingListRepository.findByReader(reader);
+	public String readerBooks(Reader reader, Model model) {
+		List<Book> readingList = null;
+		
+		if (reader != null) {
+			readingList = readingListRepository.findByReader(reader.getUsername());
+			LOG.info("Reader. Username: " + reader.getUsername());
+			LOG.info("Reader. Full Name: " + reader.getFullname());
+		}
+		else {
+			LOG.error("Reader is NUL!!!");
+		}	
 		
 		if (readingList != null) {
 			model.addAttribute("books", readingList);
+			model.addAttribute("reader", reader);
 			model.addAttribute("amazonId", amazonProperties.getAssociateId());
 		}
 		
